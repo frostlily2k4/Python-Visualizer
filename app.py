@@ -192,14 +192,56 @@ with right:
 
             if variables:
 
+                st.markdown("""
+                <style>
+                .memory-card{
+                    background: rgba(30,35,45,0.95);
+                    color:white;
+                    padding:14px 18px;
+                    border-radius:12px;
+                    margin-bottom:12px;
+                    border-left:6px solid #FFD43B;
+                    font-family: Consolas, monospace;
+                    font-size:18px;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.35);
+                }
+
+                .memory-key{
+                    color:#FFD43B;
+                    font-weight:bold;
+                }
+
+                .memory-arrow{
+                    color:#8BD5FF;
+                }
+
+                .memory-value{
+                    color:#7CFC98;
+                    font-weight:bold;
+                }
+                </style>
+                """, unsafe_allow_html=True)
+
                 for key, value in variables.items():
-                    st.success(f"{key} → {value}")
+
+                    st.markdown(
+                        f"""
+                        <div class="memory-card">
+                            <span class="memory-key">{key}</span>
+                            <span class="memory-arrow"> → </span>
+                            <span class="memory-value">{value}</span>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
 
             else:
+
                 st.info("No variables created.")
 
         else:
-            st.warning("Execution failed.")
+
+            st.error("Execution failed.")
 
     else:
 
