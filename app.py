@@ -101,94 +101,108 @@ textarea {{
 # ----------------------------------------------------
 # HEADER
 # ----------------------------------------------------
-st.markdown(
-    """
-    <div class='main-title'>
-    🐍 Python Visualizer
-    </div>
+st.markdown("""
+<div class='main-title'>
+🐍 Python Visualizer
+</div>
 
-    <div class='subtitle'>
-    Learn Python Visually • Step by Step
-    </div>
-    """,
-    unsafe_allow_html=True
+<div class='subtitle'>
+Learn Python Visually • Step by Step
+</div>
+""", unsafe_allow_html=True)
+
+# ----------------------------------------------------
+# CODE EDITOR
+# ----------------------------------------------------
+code = st.text_area(
+    "Python Code",
+    value="""x = 5
+y = x + 2
+name = "Lily"
+
+print(y)
+""",
+    height=320,
+    label_visibility="collapsed"
 )
+
+# ----------------------------------------------------
+# BUTTONS
+# ----------------------------------------------------
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    run = st.button("▶ Run Code")
+
+with col2:
+    st.button("⏮ Previous", disabled=True)
+
+with col3:
+    st.button("⏭ Next", disabled=True)
+
+# ----------------------------------------------------
+# EXECUTE CODE
+# ----------------------------------------------------
+success = False
+result = ""
+variables = {}
+
+if run:
+    success, result, variables = run_python_code(code)
 
 # ----------------------------------------------------
 # MAIN LAYOUT
 # ----------------------------------------------------
-left, right = st.columns([2,1])
+left, right = st.columns([2, 1])
 
-# LEFT PANEL
+# ---------------- LEFT : OUTPUT ----------------
 with left:
 
     st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
-    st.subheader("💻 Python Code")
+    st.subheader("📤 Output Console")
 
-    code = st.text_area(
-        "Python Code Editor",
-        value="""x = 5
-y = x + 2
-print(y)
-""",
-        height=320
-    )
+    if run:
+
+        if success:
+
+            if result.strip():
+                st.code(result, language="text")
+            else:
+                st.success("Program executed successfully.")
+
+        else:
+            st.error(result)
+
+    else:
+        st.code("Click ▶ Run Code to execute your program.")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# RIGHT PANEL
+# ---------------- RIGHT : MEMORY ----------------
 with right:
 
     st.markdown("<div class='glass'>", unsafe_allow_html=True)
 
     st.subheader("🧠 Memory")
 
-    st.info("Variables will appear here after execution.")
+    if run:
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        if success:
 
-st.write("")
+            if variables:
 
-# ----------------------------------------------------
-# BUTTONS
-# ----------------------------------------------------
-col1,col2,col3 = st.columns(3)
+                for key, value in variables.items():
+                    st.success(f"{key} → {value}")
 
-with col1:
-    run = st.button("▶ Run Code")
+            else:
+                st.info("No variables created.")
 
-with col2:
-    st.button("⏮ Previous")
-
-with col3:
-    st.button("⏭ Next")
-
-st.write("")
-
-# ----------------------------------------------------
-# OUTPUT
-# ----------------------------------------------------
-
-st.markdown("<div class='glass'>", unsafe_allow_html=True)
-
-st.subheader("📤 Output Console")
-
-if run:
-
-    success, result = run_python_code(code)
-
-    if success:
-        if result.strip() == "":
-            st.code("Program executed successfully.", language="text")
         else:
-            st.code(result, language="text")
+            st.warning("Execution failed.")
 
     else:
-        st.error(result)
 
-else:
+        st.info("Variables will appear here after execution.")
 
-    st.code("Click ▶ Run Code to execute your program.", language="text")
-
-st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
